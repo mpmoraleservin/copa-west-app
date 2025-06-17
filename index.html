@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <title>COPA WEST</title>
+  <link rel="stylesheet" href="css/style.css" type="text/css">
+</head>
+
+<body>
+  <a href="#modal-1" class="ruleta-1"><img src="img/ruleta-01.svg" alt="Ruleta Estilos"></a>
+  <a href="#modal-2" class="ruleta-2"><img src="img/ruleta-02.svg" alt="Ruleta Juegos"></a>
+  <a href="#modal" class="temporizador"><img src="img/clock2.svg" alt="Temporizador"></a>
+
+  <div class="contenido-s">
+    <div class="cabecera">
+      <img src="img/logo-copaw.png" alt="Copa West">
+    </div>
+    <div class="contenedor-box-votos">
+      <div class="box-voto">
+        <div id="contenedor1" class="base-team">
+          <select name="selector1" id="selector1" class="box-nombre selector">
+            <option value="base-team">Seleccionar</option>
+            <option value="guanakills">THE GUANAKILLS</option>
+            <option value="cabras">LAS CABRAS</option>
+            <option value="pandito">PANDITO ESCÉNICO</option>
+            <option value="lujangeles">LUJÁNGELES</option>
+            <option value="virgins">VIRGINS</option>
+            <option value="zorros">LOS ZORROS</option>
+            <option value="condors">THE CONDORS</option>
+            <option value="godoy">GODOY SPURS</option>
+            <option value="guachos">THE GAUCHOS</option>
+            <option value="caciques">CACIQUES</option>
+          </select>
+          <div class="input-voto">
+            <input type="text" id="contador1" class="form-control" min="0" />
+            <div class="contenedor-botones">
+              <button id="menos1" type="button">-</button>
+              <button id="mas1" type="button">+</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="box-voto">
+        <div id="contenedor2" class="base-team">
+          <select name="selector2" id="selector2" class="box-nombre selector">
+            <option value="base-team">Seleccionar</option>
+            <option value="guanakills">THE GUANAKILLS</option>
+            <option value="cabras">LAS CABRAS</option>
+            <option value="pandito">PANDITO ESCÉNICO</option>
+            <option value="lujangeles">LUJÁNGELES</option>
+            <option value="virgins">VIRGINS</option>
+            <option value="zorros">LOS ZORROS</option>
+            <option value="condors">THE CONDORS</option>
+            <option value="godoy">GODOY SPURS</option>
+            <option value="guachos">THE GAUCHOS</option>
+            <option value="caciques">CACIQUES</option>
+          </select>
+          <div class="input-voto">
+            <input type="text" id="contador2" class="form-control" min="0" />
+            <div class="contenedor-botones">
+              <button id="menos2" type="button">-</button>
+              <button id="mas2" type="button">+</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="box-voto">
+        <div id="contenedor3" class="base-team">
+          <select name="selector3" id="selector3" class="box-nombre selector">
+            <option value="base-team">Seleccionar</option>
+            <option value="guanakills">THE GUANAKILLS</option>
+            <option value="cabras">LAS CABRAS</option>
+            <option value="pandito">PANDITO ESCÉNICO</option>
+            <option value="lujangeles">LUJÁNGELES</option>
+            <option value="virgins">VIRGINS</option>
+            <option value="zorros">LOS ZORROS</option>
+            <option value="condors">THE CONDORS</option>
+            <option value="godoy">GODOY SPURS</option>
+            <option value="guachos">THE GAUCHOS</option>
+            <option value="caciques">CACIQUES</option>
+          </select>
+          <div class="input-voto">
+            <input type="text" id="contador3" class="form-control" min="0" />
+            <div class="contenedor-botones">
+              <button id="menos3" type="button">-</button>
+              <button id="mas3" type="button">+</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="box-voto">
+        <div id="contenedor4" class="base-team">
+          <select name="selector4" id="selector4" class="box-nombre selector">
+            <option value="base-team">Seleccionar</option>
+            <option value="guanakills">THE GUANAKILLS</option>
+            <option value="cabras">LAS CABRAS</option>
+            <option value="pandito">PANDITO ESCÉNICO</option>
+            <option value="lujangeles">LUJÁNGELES</option>
+            <option value="virgins">VIRGINS</option>
+            <option value="zorros">LOS ZORROS</option>
+            <option value="condors">THE CONDORS</option>
+            <option value="godoy">GODOY SPURS</option>
+            <option value="guachos">THE GAUCHOS</option>
+            <option value="caciques">CACIQUES</option>
+          </select>
+          <div class="input-voto">
+            <input type="text" id="contador4" class="form-control" min="0" />
+            <div class="contenedor-botones">
+              <button id="menos4" type="button">-</button>
+              <button id="mas4" type="button">+</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="modal" class="modal_mask">
+    <div class="box-modal">
+      <a href="#" class="cerrar">CERRAR</a>
+      <div>
+        <form class="stopwatch-form">
+          <div class="timer">
+            <div>
+              <input type="number" id="minutes" value="0" min="0"/>
+              <label for="minutes">Minutos</label>
+            </div>
+            <span class="time-divider">:</span>
+            <div>
+              <input type="number" id="seconds" value="0" min="0"/>
+              <label for="seconds">Segundos</label>
+            </div>
+          </div>
+          <div class="buttons">
+            <button class="stop">Alto!</button>
+            <button class="start">Empezar</button>
+            <button class="reset">Reiniciar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div id="modal-1" class="modal_mask">
+    <div class="box-modal">
+      <a href="#" class="cerrar">CERRAR</a>
+      <div class="main-container" id="mainContent1">
+        <section class="section section-1" id="roulette-section1">
+          <div class="roulette-area">
+            <div class="pointer">
+              <svg width="44" height="36" viewBox="0 0 44 36"><polygon points="0,0 44,0 22,36" fill="#fff" /></svg>
+            </div>
+            <svg id="roulette1" class="roulette-svg" width="690" height="690" viewBox="0 0 690 690"></svg>
+            <button class="spin-btn"><img src="img/girar.svg" alt="Girar"></button>
+          </div>
+          <div class="result" id="result1"></div>
+        </section>
+        <section class="section section-2" id="edit-section1">
+          <div class="editor">
+            <ul class="item-list" id="itemList1"></ul>
+            <div class="add-item-container">
+              <input type="text" id="newItem1" placeholder="Sumar estilo">
+              <button class="add-btn">+</button>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
+  
+  <div id="modal-2" class="modal_mask">
+    <div class="box-modal">
+      <a href="#" class="cerrar">CERRAR</a>
+      <div class="main-container" id="mainContent2">
+        <section class="section section-1" id="roulette-section2">
+          <div class="roulette-area">
+            <div class="pointer">
+              <svg width="44" height="36" viewBox="0 0 44 36"><polygon points="0,0 44,0 22,36" fill="#fff" /></svg>
+            </div>
+            <svg id="roulette2" class="roulette-svg" width="690" height="690" viewBox="0 0 690 690"></svg>
+            <button class="spin-btn"><img src="img/girar.svg" alt="Girar"></button>
+          </div>
+          <div class="result" id="result2"></div>
+        </section>
+        <section class="section section-2" id="edit-section2">
+          <div class="editor">
+            <ul class="item-list" id="itemList2"></ul>
+            <div class="add-item-container">
+              <input type="text" id="newItem2" placeholder="Sumar Juego">
+              <button class="add-btn">+</button>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
+  
+  <script src="js/roulette.js"></script>
+  <script src="js/main.js"></script>
+
+</body>
+</html>
