@@ -67,6 +67,7 @@ body {
 
 .contenido-s {
   position: relative;
+  margin: 20px;
   z-index: 999;
 }
 
@@ -84,10 +85,10 @@ body {
 }
 
 .contenedor-box-votos {
-  width: 1200px;
+  max-width: 95%;
   display: flex;
   position: relative;
-  margin: 0px auto;
+  margin: 50px auto;
 }
 
 .box-voto {
@@ -714,4 +715,27 @@ body {
     cursor: pointer;
     background: #457B9D;
     color: white;
+}
+
+/* ========================================================================
+ * BOTÓN DE PANTALLA COMPLETA
+ * ======================================================================== */
+
+.fullscreen-btn {
+  position: fixed;
+  z-index: 9999;
+  right:30px; 
+  top: 20px;
+  width: 20px; 
+  height: auto;
+  transition: all 0.3s;
+  background: none;
+  border: none;
+  padding: 0;
+}
+
+.fullscreen-btn svg {
+  width: 40px; 
+  height: 40px;
+  filter: drop-shadow(2px 2px 2px rgba(0, 0, 0, 0.5));
 }

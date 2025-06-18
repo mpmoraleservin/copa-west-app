@@ -171,4 +171,48 @@ document.addEventListener('DOMContentLoaded', () => {
         minutesInput.value = mins;
         secondsInput.value = secs < 10 ? '0' + String(secs) : secs;
     }
+
+    /*
+    ========================================================================
+    LÓGICA DEL BOTÓN DE PANTALLA COMPLETA
+    ========================================================================
+    */
+    const fullscreenBtn = document.getElementById('fullscreen-btn');
+    const iconEnter = document.getElementById('icon-enter-fs');
+    const iconExit = document.getElementById('icon-exit-fs');
+
+    function toggleFullscreen() {
+        if (!document.fullscreenElement) {
+            // Si no estamos en pantalla completa, la activamos.
+            document.documentElement.requestFullscreen().catch(err => {
+                console.error(`Error al intentar activar la pantalla completa: ${err.message} (${err.name})`);
+            });
+        } else {
+            // Si ya estamos en pantalla completa, la desactivamos.
+            if (document.exitFullscreen) {
+                document.exitFullscreen();
+            }
+        }
+    }
+
+    function updateFullscreenIcon() {
+        if (document.fullscreenElement) {
+            // Estamos en modo pantalla completa: mostrar icono de SALIR.
+            iconEnter.style.display = 'none';
+            iconExit.style.display = 'block';
+            fullscreenBtn.setAttribute('title', 'Salir de Pantalla Completa');
+        } else {
+            // No estamos en modo pantalla completa: mostrar icono de ENTRAR.
+            iconEnter.style.display = 'block';
+            iconExit.style.display = 'none';
+            fullscreenBtn.setAttribute('title', 'Pantalla Completa');
+        }
+    }
+
+    // Añadimos el evento 'click' al botón.
+    fullscreenBtn.addEventListener('click', toggleFullscreen);
+
+    // Escuchamos por cambios en el estado de la pantalla completa para actualizar el icono.
+    document.addEventListener('fullscreenchange', updateFullscreenIcon);
+    
 });
