@@ -48,11 +48,11 @@ class Roulette {
         
         // Colores bonitos y distintos para la inicialización
         this.baseColors = [
-            "#00B4D8", // celeste
-            "#52B788", // verde
-            "#FFD23F", // amarillo
-            "#FF9F1C", // naranja
-            "#E63946"  // rojo
+            "#0a2e9e", // azul oscuro
+            "#760878", // violeta
+            "#bf2428", // rojo
+            "#b18925", // dorado
+            "#6eb370"  // verde
         ];
         this.usedColors = new Set();
         // Estado de la ruleta (cargado desde la configuración o por defecto), usando colores base
