@@ -57,6 +57,7 @@ class Roulette {
             { text: "Opción 4", color: this.colorPalette[3] },
             { text: "Opción 5", color: this.colorPalette[4] },
         ];
+        this.nextColorIndex = this.items.length;
         this.spinning = false;
         this.currentRotation = 0;
         // Contexto para medir ancho de texto (para hacer saltos de línea por ancho máximo)
@@ -81,8 +82,26 @@ class Roulette {
         return a;
     }
     generatePalette() {
-        const shuffled = this.shuffle(FUN_COLORS);
-        return shuffled.map(c => this.ensureContrast(c, 0.25));
+        // Generar colores HSL evitando zonas de azules (190–270) y rosados (300–350).
+        // Permitimos: 0–80 (rojos/naranjas/amarillos), 80–150 (verdes), 150–170 (oliva), 350–360 (rojo nuevamente)
+        const allowedBands = [ [0,80], [80,150], [150,170], [350,360] ];
+        const desiredCount = 24; // por tanda
+        const result = [];
+        let bandIndex = Math.floor(Math.random() * allowedBands.length);
+        let step = 0;
+        while (result.length < desiredCount) {
+            const [minH, maxH] = allowedBands[bandIndex % allowedBands.length];
+            const span = maxH - minH;
+            const buckets = 6;
+            const bucket = step % buckets;
+            const hue = minH + (span / buckets) * bucket + Math.random() * 3; // pequeño jitter
+            const sat = 80 + Math.random() * 12;  // 80–92
+            const light = 48 + Math.random() * 10; // 48–58 (bien para texto blanco)
+            const col = this.hslToHex(hue, sat, light);
+            result.push(this.ensureContrast(col, 0.25));
+            bandIndex++; step++;
+        }
+        return this.shuffle(result);
     }
     hexToRgb(hex) {
         const clean = hex.replace('#', '');
@@ -96,6 +115,16 @@ class Roulette {
     rgbToHex(r, g, b) {
         const c = (x) => x.toString(16).padStart(2, '0');
         return `#${c(r)}${c(g)}${c(b)}`;
+    }
+    hslToHex(h, s, l) {
+        s /= 100; l /= 100;
+        const k = (n) => (n + h / 30) % 12;
+        const a = s * Math.min(l, 1 - l);
+        const f = (n) => l - a * Math.max(-1, Math.min(k(n) - 3, Math.min(9 - k(n), 1)));
+        const r = Math.round(255 * f(0));
+        const g = Math.round(255 * f(8));
+        const b = Math.round(255 * f(4));
+        return this.rgbToHex(r, g, b);
     }
     relativeLuminance(hex) {
         const { r, g, b } = this.hexToRgb(hex);
@@ -314,7 +343,12 @@ class Roulette {
         if (!text) return;
         
         // Asignar el siguiente color de una paleta aleatoria pre-barajada
-        const chosen = this.colorPalette[this.items.length % this.colorPalette.length];
+        // Si agotamos la paleta, generar otra tanda para mantener variedad
+        if (this.nextColorIndex >= this.colorPalette.length) {
+            this.colorPalette = this.generatePalette();
+            this.nextColorIndex = 0;
+        }
+        const chosen = this.colorPalette[this.nextColorIndex++ % this.colorPalette.length];
         const color = chosen; // ya viene con contraste asegurado
 
         this.items.push({ text, color });
