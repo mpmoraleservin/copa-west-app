@@ -381,8 +381,8 @@ body {
 
 .roulette-area {
   position: relative;
-  width: 700px;
-  height: 700px;
+  width: 800px;
+  height: 800px;
   margin: 0 auto 12px;
   box-sizing: border-box;
   overflow: visible;
@@ -396,8 +396,8 @@ body {
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
-  width: 700px;
-  height: 700px;
+  width: 800px;
+  height: 800px;
   border-radius: 50%;
   background: #fff;
   z-index: 0;
@@ -439,6 +439,19 @@ body {
 .spin-btn:hover {
   transform: scale(1.05);
   box-shadow: 0 5px 20px rgba(0, 140, 255, 0.13);
+}
+
+.roulette-svg {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  box-shadow: 0 12px 36px 0 rgba(0, 0, 0, 0.16), 0 2px 8px 0 rgba(0, 0, 0, 0.10);
+  overflow: visible;
+}
+
+.roulette-svg text {
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+  letter-spacing: 0.5px;
 }
 
 .result { display: none; }
@@ -567,38 +580,6 @@ body {
 }
 
 /* ========================================================================
- * ESTILOS DE HISTORIAL (No implementado en el JS pero se deja el CSS)
- * ======================================================================== */
-
-.history-modal-bg {
-  position: fixed;
-  left: 0;
-  top: 0;
-  width: 100vw;
-  height: 100vh;
-  z-index: 1000;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  background: rgba(0, 0, 0, 0.16);
-}
-
-.history-modal {
-  background: rgba(255, 255, 255, 0.85);
-  border-radius: 18px;
-  box-shadow: 0 8px 32px #0002, 0 2px 8px #0001;
-  padding: 28px 30px 22px 30px;
-  min-width: 260px;
-  max-width: 90vw;
-  max-height: 80vh;
-  overflow-y: auto;
-  position: relative;
-  font-family: 'Outfit', sans-serif;
-}
-
-/* ========================================================================
  * DISEÑO RESPONSIVE
  * ======================================================================== */
 
@@ -621,8 +602,8 @@ body {
   .roulette-area {
     width: 98vw;
     height: 98vw;
-    max-width: 320px;
-    max-height: 320px;
+    max-width: 400px;
+    max-height: 400px;
   }
 
   .roulette-area-bg {
@@ -630,12 +611,6 @@ body {
     height: 100%;
   }
 }
-
-/* ... (Todo el CSS anterior) ... */
-
-/* ========================================================================
- * ESTILOS NUEVOS PARA MEJORAS
- * ======================================================================== */
 
 /* --- Header y Controles --- */
 .main-header {
