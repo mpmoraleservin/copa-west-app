@@ -46,18 +46,23 @@ class Roulette {
         this.spinButton = document.querySelector(this.spinButtonSelector);
         this.addButton = document.querySelector(this.addButtonSelector);
         
-        // Generar una paleta amplia con alto contraste y repartir los primeros colores bien espaciados
-        this.colorPalette = this.generatePalette();
-        this.usedColorIndices = new Set();
-        const initialCount = 5;
-        const spacedIndices = this.getEvenlySpacedIndices(initialCount, this.colorPalette.length);
-        // Estado de la ruleta (cargado desde la configuración o por defecto), usando colores distintos y bien distribuidos
-        this.items = config.initialItems || spacedIndices.map((idx, i) => {
-            this.usedColorIndices.add(idx);
-            return { text: `Opción ${i+1}`, color: this.colorPalette[idx] };
+        // Colores bonitos y distintos para la inicialización
+        this.baseColors = [
+            "#00B4D8", // celeste
+            "#52B788", // verde
+            "#FFD23F", // amarillo
+            "#FF9F1C", // naranja
+            "#E63946"  // rojo
+        ];
+        this.usedColors = new Set();
+        // Estado de la ruleta (cargado desde la configuración o por defecto), usando colores base
+        this.items = config.initialItems || this.baseColors.map((color, i) => {
+            this.usedColors.add(color);
+            return { text: `Opción ${i+1}`, color: this.ensureContrast(color, 0.25) };
         });
-        // Punto de partida para agregar nuevos colores
-        this.nextColorIndex = (Math.max(...Array.from(this.usedColorIndices)) + 1) % this.colorPalette.length;
+        // Generar paleta extendida para items adicionales
+        this.extendedPalette = this.generateExtendedPalette();
+        this.nextColorIndex = 0;
         this.spinning = false;
         this.currentRotation = 0;
         // Contexto para medir ancho de texto (para hacer saltos de línea por ancho máximo)
@@ -73,15 +78,7 @@ class Roulette {
     // -----------------------------
     // Utilidades de color/contraste
     // -----------------------------
-    getEvenlySpacedIndices(count, length) {
-        const step = Math.floor(length / count);
-        const offset = Math.floor(Math.random() * step);
-        const indices = [];
-        for (let i = 0; i < count; i++) {
-            indices.push((offset + i * step) % length);
-        }
-        return indices;
-    }
+
     shuffle(array) {
         const a = array.slice();
         for (let i = a.length - 1; i > 0; i--) {
@@ -90,28 +87,26 @@ class Roulette {
         }
         return a;
     }
-    generatePalette() {
-        // Generar una paleta amplia cubriendo todo el espectro pero saltando rangos similares
-        // Permitimos: rojos/naranjas/amarillos (0–80), verdes (80–150), turquesas/evitar azules plenos (150–180),
-        // magentas/rosas moderados (320–350) para garantizar variedad. Añadimos algunos amarillos/menta claros.
-        const allowedBands = [ [0,80], [80,150], [150,180], [320,350] ];
-        const desiredCount = 30; // por tanda
-        const result = [];
-        let bandIndex = Math.floor(Math.random() * allowedBands.length);
-        let step = 0;
-        while (result.length < desiredCount) {
-            const [minH, maxH] = allowedBands[bandIndex % allowedBands.length];
-            const span = maxH - minH;
-            const buckets = 6;
-            const bucket = step % buckets;
-            const hue = minH + (span / buckets) * bucket + Math.random() * 3; // pequeño jitter
-            const sat = 82 + Math.random() * 14;  // 82–96 alto croma
-            const light = 45 + Math.random() * 12; // 45–57 (bien para texto blanco)
-            const col = this.hslToHex(hue, sat, light);
-            result.push(this.ensureContrast(col, 0.25));
-            bandIndex++; step++;
-        }
-        return this.shuffle(result);
+    generateExtendedPalette() {
+        // Generar colores adicionales bonitos y distintos
+        const additionalColors = [
+            "#7209B7", // violeta
+            "#F72585", // magenta
+            "#06FFA5", // verde neón
+            "#FF6B6B", // coral
+            "#4ECDC4", // turquesa
+            "#45B7D1", // azul claro
+            "#96CEB4", // verde menta
+            "#FFEAA7", // amarillo claro
+            "#DDA0DD", // ciruela
+            "#98D8C8", // verde agua
+            "#F7DC6F", // amarillo dorado
+            "#BB8FCE", // lavanda
+            "#85C1E9", // azul cielo
+            "#F8C471", // melocotón
+            "#82E0AA"  // verde lima
+        ];
+        return additionalColors.map(color => this.ensureContrast(color, 0.25));
     }
     hexToRgb(hex) {
         const clean = hex.replace('#', '');
@@ -264,7 +259,7 @@ class Roulette {
 
             const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
             path.setAttribute('d', `M ${cx},${cy} L ${x1},${y1} A ${r},${r} 0 ${largeArc},1 ${x2},${y2} Z`);
-            const baseColor = this.items[i].color || this.colorPalette[i % this.colorPalette.length];
+            const baseColor = this.items[i].color || this.extendedPalette[i % this.extendedPalette.length];
             const fillColor = this.ensureContrast(baseColor, 0.25);
             path.setAttribute('fill', fillColor);
             path.setAttribute('stroke', '#fff');
@@ -353,23 +348,18 @@ class Roulette {
         if (!text) return;
         
         // Asignar el siguiente color de una paleta aleatoria pre-barajada
-        // Buscar el siguiente índice libre en la paleta para no repetir hasta usar todos
-        let attempts = 0;
-        let idx = this.nextColorIndex % this.colorPalette.length;
-        while (this.usedColorIndices.has(idx) && attempts < this.colorPalette.length) {
-            idx = (idx + 1) % this.colorPalette.length;
-            attempts++;
+        // Usar colores de la paleta extendida, evitando repetir
+        let color;
+        if (this.nextColorIndex < this.extendedPalette.length) {
+            color = this.extendedPalette[this.nextColorIndex];
+            this.nextColorIndex++;
+        } else {
+            // Si se agotaron, generar nueva paleta
+            this.extendedPalette = this.generateExtendedPalette();
+            this.nextColorIndex = 0;
+            color = this.extendedPalette[0];
+            this.nextColorIndex = 1;
         }
-        if (attempts >= this.colorPalette.length) {
-            // Se usaron todos: crear nueva paleta y reiniciar el set
-            this.colorPalette = this.generatePalette();
-            this.usedColorIndices.clear();
-            idx = 0;
-        }
-        const chosen = this.colorPalette[idx];
-        this.usedColorIndices.add(idx);
-        this.nextColorIndex = (idx + 1) % this.colorPalette.length;
-        const color = chosen; // ya viene con contraste asegurado
 
         this.items.push({ text, color });
         this.newItemEl.value = '';
