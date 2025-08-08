@@ -46,18 +46,18 @@ class Roulette {
         this.spinButton = document.querySelector(this.spinButtonSelector);
         this.addButton = document.querySelector(this.addButtonSelector);
         
-        // Generar una paleta aleatoria asegurando buen contraste con blanco
+        // Generar una paleta amplia con alto contraste y repartir los primeros colores bien espaciados
         this.colorPalette = this.generatePalette();
-
-        // Estado de la ruleta (cargado desde la configuración o por defecto), usando colores aleatorios
-        this.items = config.initialItems || [
-            { text: "Opción 1", color: this.colorPalette[0] },
-            { text: "Opción 2", color: this.colorPalette[1] },
-            { text: "Opción 3", color: this.colorPalette[2] },
-            { text: "Opción 4", color: this.colorPalette[3] },
-            { text: "Opción 5", color: this.colorPalette[4] },
-        ];
-        this.nextColorIndex = this.items.length;
+        this.usedColorIndices = new Set();
+        const initialCount = 5;
+        const spacedIndices = this.getEvenlySpacedIndices(initialCount, this.colorPalette.length);
+        // Estado de la ruleta (cargado desde la configuración o por defecto), usando colores distintos y bien distribuidos
+        this.items = config.initialItems || spacedIndices.map((idx, i) => {
+            this.usedColorIndices.add(idx);
+            return { text: `Opción ${i+1}`, color: this.colorPalette[idx] };
+        });
+        // Punto de partida para agregar nuevos colores
+        this.nextColorIndex = (Math.max(...Array.from(this.usedColorIndices)) + 1) % this.colorPalette.length;
         this.spinning = false;
         this.currentRotation = 0;
         // Contexto para medir ancho de texto (para hacer saltos de línea por ancho máximo)
@@ -73,6 +73,15 @@ class Roulette {
     // -----------------------------
     // Utilidades de color/contraste
     // -----------------------------
+    getEvenlySpacedIndices(count, length) {
+        const step = Math.floor(length / count);
+        const offset = Math.floor(Math.random() * step);
+        const indices = [];
+        for (let i = 0; i < count; i++) {
+            indices.push((offset + i * step) % length);
+        }
+        return indices;
+    }
     shuffle(array) {
         const a = array.slice();
         for (let i = a.length - 1; i > 0; i--) {
@@ -82,10 +91,11 @@ class Roulette {
         return a;
     }
     generatePalette() {
-        // Generar colores HSL evitando zonas de azules (190–270) y rosados (300–350).
-        // Permitimos: 0–80 (rojos/naranjas/amarillos), 80–150 (verdes), 150–170 (oliva), 350–360 (rojo nuevamente)
-        const allowedBands = [ [0,80], [80,150], [150,170], [350,360] ];
-        const desiredCount = 24; // por tanda
+        // Generar una paleta amplia cubriendo todo el espectro pero saltando rangos similares
+        // Permitimos: rojos/naranjas/amarillos (0–80), verdes (80–150), turquesas/evitar azules plenos (150–180),
+        // magentas/rosas moderados (320–350) para garantizar variedad. Añadimos algunos amarillos/menta claros.
+        const allowedBands = [ [0,80], [80,150], [150,180], [320,350] ];
+        const desiredCount = 30; // por tanda
         const result = [];
         let bandIndex = Math.floor(Math.random() * allowedBands.length);
         let step = 0;
@@ -95,8 +105,8 @@ class Roulette {
             const buckets = 6;
             const bucket = step % buckets;
             const hue = minH + (span / buckets) * bucket + Math.random() * 3; // pequeño jitter
-            const sat = 80 + Math.random() * 12;  // 80–92
-            const light = 48 + Math.random() * 10; // 48–58 (bien para texto blanco)
+            const sat = 82 + Math.random() * 14;  // 82–96 alto croma
+            const light = 45 + Math.random() * 12; // 45–57 (bien para texto blanco)
             const col = this.hslToHex(hue, sat, light);
             result.push(this.ensureContrast(col, 0.25));
             bandIndex++; step++;
@@ -343,12 +353,22 @@ class Roulette {
         if (!text) return;
         
         // Asignar el siguiente color de una paleta aleatoria pre-barajada
-        // Si agotamos la paleta, generar otra tanda para mantener variedad
-        if (this.nextColorIndex >= this.colorPalette.length) {
-            this.colorPalette = this.generatePalette();
-            this.nextColorIndex = 0;
+        // Buscar el siguiente índice libre en la paleta para no repetir hasta usar todos
+        let attempts = 0;
+        let idx = this.nextColorIndex % this.colorPalette.length;
+        while (this.usedColorIndices.has(idx) && attempts < this.colorPalette.length) {
+            idx = (idx + 1) % this.colorPalette.length;
+            attempts++;
         }
-        const chosen = this.colorPalette[this.nextColorIndex++ % this.colorPalette.length];
+        if (attempts >= this.colorPalette.length) {
+            // Se usaron todos: crear nueva paleta y reiniciar el set
+            this.colorPalette = this.generatePalette();
+            this.usedColorIndices.clear();
+            idx = 0;
+        }
+        const chosen = this.colorPalette[idx];
+        this.usedColorIndices.add(idx);
+        this.nextColorIndex = (idx + 1) % this.colorPalette.length;
         const color = chosen; // ya viene con contraste asegurado
 
         this.items.push({ text, color });
